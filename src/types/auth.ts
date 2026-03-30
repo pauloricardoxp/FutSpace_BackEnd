@@ -8,3 +8,8 @@ export type authLogin = {
     email: string
     password: string;
 }
+
+export type useType = {
+    name: string
+   
+}

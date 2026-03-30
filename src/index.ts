@@ -3,6 +3,8 @@ import jwtPlugin from "./plugins/jwt";
 import prismaPlugin from "./plugins/prisma";
 import { authRoutes } from "./routes/auth";
 import { matchesRoute } from "./routes/matches";
+import { playersRoute } from "./routes/players";
+import { teamsRoute } from "./routes/teams";
 const server = fastify({
   logger: true,
 });
@@ -12,6 +14,8 @@ server.register(prismaPlugin);
 
 server.register(authRoutes, { prefix: "/auth" });
 server.register(matchesRoute, { prefix: "/matches" });
+server.register(playersRoute, { prefix: "/players" });
+server.register(teamsRoute, { prefix: "/teams" });
 
 const start = async () => {
   try {
