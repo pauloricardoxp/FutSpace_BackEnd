@@ -6,7 +6,7 @@ export const eventsSchemas = {
       type: "object",
       required: ["type", "minute", "id_player"],
       properties: {
-        type: { type: "string", enum: ["goal", "assist"], default: "goal" },
+        type: { type: "string", enum: ["goal"], default: "goal" },
         minute: { type: "number", default: 15 },
         id_player: { type: "number", default: 1 },
         id_assistido: { type: "number", default: null },

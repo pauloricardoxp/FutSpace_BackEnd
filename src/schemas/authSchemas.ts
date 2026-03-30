@@ -4,11 +4,11 @@ export const authSchemas = {
     summary: "Registrar no FutSpace",
     body: {
       type: "object",
-      required: ["nome", "email", "senha",],
+      required: ["name", "email", "password"],
       properties: {
-        nome: { type: "string", default: "Paulo Ricardo" },
+        name: { type: "string", default: "Paulo Ricardo" },
         email: { type: "string", default: "paulo@email.com" },
-        senha: { type: "string", default: "123456" },
+        password: { type: "string", default: "Senha@123" },
       },
     },
     response: {
@@ -16,9 +16,8 @@ export const authSchemas = {
         type: "object",
         properties: {
           id_usuario: { type: "number" },
-          nome: { type: "string" },
+          name: { type: "string" },
           email: { type: "string" },
-          creado_em: { type: "string" },
         },
       },
     },
@@ -29,10 +28,10 @@ export const authSchemas = {
     summary: "Login no FutSpace",
     body: {
       type: "object",
-      required: ["email", "senha"],
+      required: ["email", "password"],
       properties: {
-        email: { type: "string", default: "teste@email.com" },
-        senha: { type: "string", default: "123456" },
+        email: { type: "string", default: "paulo@email.com" },
+        password: { type: "string", default: "Senha@123" },
       },
     },
     response: {
@@ -40,7 +39,9 @@ export const authSchemas = {
         type: "object",
         properties: {
           token: { type: "string" },
-          nome: { type: "string" },
+          id_usuario: { type: "number" },
+          name: { type: "string" },
+          email: { type: "string" },
         },
       },
     },

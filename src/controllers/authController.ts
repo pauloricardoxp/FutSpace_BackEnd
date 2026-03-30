@@ -31,7 +31,12 @@ export class authController {
         id: users.id_usuario,
         email: users.email,
       });
-      return res.code(200).send({ token });
+      return res.code(200).send({
+        token,
+        id_usuario: users.id_usuario,
+        name: users.name,
+        email: users.email,
+      });
     } catch (err: any) {
       const { statusCode, message } = handleError(err);
       return res.code(statusCode).send({ error: message });

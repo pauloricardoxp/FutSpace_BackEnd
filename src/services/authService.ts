@@ -11,23 +11,19 @@ export class authService {
   constructor(private prisma: PrismaClient) {}
 
   async register(data: authRegister) {
-    // Validar name
     if (!validateName(data.name)) {
       throw new Error("Nome deve ter entre 3 e 100 caracteres");
     }
 
-    // Validar email
     if (!validateEmail(data.email)) {
       throw new Error("Email inválido");
     }
 
-    // Validar senha
     const passwordValidation = validatePassword(data.password);
     if (!passwordValidation.valid) {
       throw new Error(passwordValidation.errors.join(". "));
     }
 
-    // Verificar se email já existe
     const exists = await this.prisma.users.findUnique({
       where: { email: data.email },
     });
@@ -52,7 +48,6 @@ export class authService {
   }
 
   async login(data: authLogin) {
-    // Validar email
     if (!validateEmail(data.email)) {
       throw new Error("Email inválido");
     }
@@ -71,6 +66,10 @@ export class authService {
       throw new Error("Email ou senha inválidos");
     }
 
-    return users;
+    return {
+      id_usuario: users.id_usuario,
+      name: users.name,
+      email: users.email,
+    };
   }
 }
