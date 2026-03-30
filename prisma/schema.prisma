@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model Users {
+  id_usuario Int       @id @default(autoincrement())
+  name       String    @db.VarChar(100)
+  email      String    @unique @db.VarChar(100)
+  password   String    @db.VarChar(255)
+  created_at DateTime  @default(now())
+  matches    Matches[]
+  players    Players[]
+}
+
+model Matches {
+  id_matches       Int       @id @default(autoincrement())
+  name             String    @db.VarChar(100)
+  location         String?   @db.VarChar(50)
+  scheduled_at     DateTime  @default(now())
+  duration_minutes Int
+  num_teams        Int
+  players_per_team Int
+  status           Status    @default(pending)
+  created_at       DateTime  @default(now())
+  finished_at      DateTime?
+  id_usuario       Int
+  users            Users     @relation(fields: [id_usuario], references: [id_usuario])
+  teams            Teams[]
+  players          Players[]
+  events           Events[]
+}
+
+model Teams {
+  id_time    Int       @id @default(autoincrement())
+  name       String    @db.VarChar(50)
+  goals      Int       @default(0)
+  id_matches Int
+  matches    Matches   @relation(fields: [id_matches], references: [id_matches])
+  players    Players[]
+}
+
+model Players {
+  id_players      Int      @id @default(autoincrement())
+  name            String   @db.VarChar(100)
+  position        Position
+  is_guest        Boolean  @default(false)
+  id_usuario      Int?
+  users           Users?   @relation(fields: [id_usuario], references: [id_usuario])
+  id_matches      Int
+  matches         Matches  @relation(fields: [id_matches], references: [id_matches])
+  id_time         Int
+  teams           Teams    @relation(fields: [id_time], references: [id_time])
+  events_authored Events[] @relation("EventAuthor")
+  events_assisted Events[] @relation("EventAssist")
+}
+
+model Events {
+  id_events    Int      @id @default(autoincrement())
+  type         Type
+  minute       Int?
+  created_at   DateTime @default(now())
+  id_matches   Int
+  matches      Matches  @relation(fields: [id_matches], references: [id_matches])
+  id_player    Int
+  player       Players  @relation("EventAuthor", fields: [id_player], references: [id_players])
+  id_assistido Int?
+  assistido    Players? @relation("EventAssist", fields: [id_assistido], references: [id_players])
+}
+
+enum Status {
+  pending
+  ongoing
+  finished
+}
+
+enum Position {
+  linha
+  goleiro
+}
+
+enum Type {
+  goal
+  assist
+}
