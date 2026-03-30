@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { playerServices } from "../services/playersServices";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { playersCreate } from "../types/players";
+import { handleError } from "../utils/errorHandler";
 
 export class playersController {
   private playersService: playerServices;
@@ -15,10 +16,11 @@ export class playersController {
     const body = req.body as playersCreate;
 
     try {
-      const players = await this.playersService.addPlayer(body, id);
+      const players = await this.playersService.addPlayer(body, Number(id));
       res.code(201).send(players);
     } catch (err: any) {
-      res.code(500).send({ error: err.message });
+      const { statusCode, message } = handleError(err);
+      res.code(statusCode).send({ error: message });
     }
   }
 
@@ -32,7 +34,8 @@ export class playersController {
       const players = await this.playersService.searchUsers(name);
       res.code(200).send(players);
     } catch (err: any) {
-      res.code(500).send({ error: err.message });
+      const { statusCode, message } = handleError(err);
+      res.code(statusCode).send({ error: message });
     }
   }
 }

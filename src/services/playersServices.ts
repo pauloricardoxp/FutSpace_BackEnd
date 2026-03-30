@@ -34,8 +34,11 @@ export class playerServices {
 
     return await this.prisma.players.create({
       data: {
-        ...data,
+        name: data.name,
+        position: data.position,
+        is_guest: data.is_guest,
         id_matches,
+        ...(data.id_usuario ? { id_usuario: data.id_usuario } : {}),
       },
     });
   }
@@ -44,15 +47,15 @@ export class playerServices {
     return await this.prisma.users.findMany({
       where: {
         name: {
-            contains: name,
-            mode: "insensitive"
-        }
+          contains: name,
+          mode: "insensitive",
+        },
       },
       select: {
         id_usuario: true,
         name: true,
-        email: true
-      }
+        email: true,
+      },
     });
   }
 }

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { summaryService } from "../services/summaryService";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { handleError } from "../utils/errorHandler";
 
 export class summaryController {
   private summaryService: summaryService;
@@ -16,7 +17,8 @@ export class summaryController {
       const summary = await this.summaryService.getMatchSummary(Number(id));
       res.code(200).send(summary);
     } catch (err: any) {
-      res.code(500).send({ error: err.message });
+      const { statusCode, message } = handleError(err);
+      res.code(statusCode).send({ error: message });
     }
   }
 }

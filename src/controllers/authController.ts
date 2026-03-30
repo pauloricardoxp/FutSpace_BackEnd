@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { authService } from "../services/authService";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { authLogin, authRegister } from "../types/auth";
+import { handleError } from "../utils/errorHandler";
 
 export class authController {
   private authService: authService;
@@ -16,7 +17,8 @@ export class authController {
       const users = await this.authService.register(body);
       res.code(201).send(users);
     } catch (err: any) {
-      res.code(500).send({ error: err.message });
+      const { statusCode, message } = handleError(err);
+      res.code(statusCode).send({ error: message });
     }
   }
 
@@ -31,7 +33,8 @@ export class authController {
       });
       return res.code(200).send({ token });
     } catch (err: any) {
-      return res.code(400).send({ error: err.message });
+      const { statusCode, message } = handleError(err);
+      return res.code(statusCode).send({ error: message });
     }
   }
 }
