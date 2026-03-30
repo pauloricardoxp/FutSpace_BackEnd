@@ -17,10 +17,10 @@ server.register(prismaPlugin);
 
 server.register(authRoutes, { prefix: "/auth" });
 server.register(matchesRoute, { prefix: "/matches" });
+server.register(teamsRoute, { prefix: "/matches" });
+server.register(eventsRoute, { prefix: "/matches" });
+server.register(summaryRoute, { prefix: "/matches" });
 server.register(playersRoute, { prefix: "/players" });
-server.register(teamsRoute, { prefix: "/teams" });
-server.register(eventsRoute, { prefix: "/events" });
-server.register(summaryRoute, { prefix: "/summary" });
 server.register(historyRoute, { prefix: "/history" });
 
 const start = async () => {

@@ -5,7 +5,7 @@ export async function eventsRoute(server: FastifyInstance) {
   const eventscontroller = new eventController(server.prisma);
 
   server.post(
-    "/matches/:id",
+    "/:id/events",
     { preHandler: [server.authenticate] },
     eventscontroller.create.bind(eventscontroller),
   );

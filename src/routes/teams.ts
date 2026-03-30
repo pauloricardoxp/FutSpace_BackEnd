@@ -5,7 +5,7 @@ export async function teamsRoute(server: FastifyInstance) {
   const teamscontroller = new teamsController(server.prisma);
 
   server.post(
-    "/matches/:id/draw",
+    "/:id/teams/draw",
     { preHandler: [server.authenticate] },
     teamscontroller.drawTeams.bind(teamscontroller),
   );
