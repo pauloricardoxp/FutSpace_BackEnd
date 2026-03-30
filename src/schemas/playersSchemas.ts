@@ -6,7 +6,7 @@ export const playersSchemas = {
       type: "object",
       required: ["name", "position", "is_guest"],
       properties: {
-        name: { type: "string", default: "Pedro Silva" },
+        name: { type: "string", default: "Paulo Ricardo" },
         position: {
           type: "string",
           enum: ["linha", "goleiro"],
@@ -35,7 +35,7 @@ export const playersSchemas = {
       type: "object",
       required: ["name"],
       properties: {
-        name: { type: "string", default: "João" },
+        name: { type: "string", default: "Paulo" },
       },
     },
     response: {
