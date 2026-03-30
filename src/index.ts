@@ -6,6 +6,7 @@ import { matchesRoute } from "./routes/matches";
 import { playersRoute } from "./routes/players";
 import { teamsRoute } from "./routes/teams";
 import { eventsRoute } from "./routes/events";
+import { summaryRoute } from "./routes/summary";
 const server = fastify({
   logger: true,
 });
@@ -18,6 +19,7 @@ server.register(matchesRoute, { prefix: "/matches" });
 server.register(playersRoute, { prefix: "/players" });
 server.register(teamsRoute, { prefix: "/teams" });
 server.register(eventsRoute, { prefix: "/events" });
+server.register(summaryRoute, { prefix: "/summary" });
 
 const start = async () => {
   try {
