@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
 }
 
 model Users {
@@ -53,8 +52,8 @@ model Players {
   users           Users?   @relation(fields: [id_usuario], references: [id_usuario])
   id_matches      Int
   matches         Matches  @relation(fields: [id_matches], references: [id_matches])
-  id_time         Int
-  teams           Teams    @relation(fields: [id_time], references: [id_time])
+  id_time         Int?
+  teams           Teams?   @relation(fields: [id_time], references: [id_time])
   events_authored Events[] @relation("EventAuthor")
   events_assisted Events[] @relation("EventAssist")
 }
