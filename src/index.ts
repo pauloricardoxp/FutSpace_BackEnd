@@ -8,8 +8,33 @@ import { teamsRoute } from "./routes/teams";
 import { eventsRoute } from "./routes/events";
 import { summaryRoute } from "./routes/summary";
 import { historyRoute } from "./routes/history";
+import swagger from "@fastify/swagger";
+import scalarPlugin from "@scalar/fastify-api-reference";
 const server = fastify({
   logger: true,
+});
+
+await server.register(swagger, {
+  openapi: {
+    info: {
+      title: "FutSpace  API",
+      description: "API do sistema de gerenciamento de partidas",
+      version: "1.0.0",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+});
+
+await server.register(scalarPlugin, {
+  routePrefix: "/docs",
 });
 
 server.register(jwtPlugin);
