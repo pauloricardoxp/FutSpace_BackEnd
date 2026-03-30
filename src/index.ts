@@ -1,6 +1,8 @@
 import fastify from "fastify";
 import jwtPlugin from "./plugins/jwt";
 import prismaPlugin from "./plugins/prisma";
+import helmetPlugin from "./plugins/helmet";
+import rateLimitPlugin from "./plugins/rateLimit";
 import { authRoutes } from "./routes/auth";
 import { matchesRoute } from "./routes/matches";
 import { playersRoute } from "./routes/players";
@@ -37,6 +39,8 @@ await server.register(scalarPlugin, {
   routePrefix: "/docs",
 });
 
+server.register(helmetPlugin);
+server.register(rateLimitPlugin);
 server.register(jwtPlugin);
 server.register(prismaPlugin);
 
