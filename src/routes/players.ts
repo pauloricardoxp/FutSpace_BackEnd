@@ -11,9 +11,15 @@ export async function playersRoute(server: FastifyInstance) {
     playercontroller.addPlayer.bind(playercontroller),
   );
 
-  server.post(
+  server.get(
     "/search",
     { schema: playersSchemas.search, preHandler: [server.authenticate] },
     playercontroller.searchPlayers.bind(playercontroller),
+  );
+
+  server.delete(
+    "/:id_matches/:id_players",
+    { schema: playersSchemas.delete, preHandler: [server.authenticate] },
+    playercontroller.deletePlayer.bind(playercontroller),
   );
 }

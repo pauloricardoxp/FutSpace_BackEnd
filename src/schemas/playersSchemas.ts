@@ -52,4 +52,26 @@ export const playersSchemas = {
       },
     },
   },
+
+  delete: {
+    tags: ["Players"],
+    summary: "Remover jogador da partida",
+    params: {
+      type: "object",
+      properties: {
+        id_matches: { type: "string" },
+        id_players: { type: "string" },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          id_players: { type: "number" },
+          name: { type: "string" },
+          position: { type: "string" },
+        },
+      },
+    },
+  },
 };
