@@ -10,4 +10,10 @@ export async function teamsRoute(server: FastifyInstance) {
     { schema: teamsSchemas.draw, preHandler: [server.authenticate] },
     teamscontroller.drawTeams.bind(teamscontroller),
   );
+
+  server.get(
+    "/:id/teams",
+    { schema: teamsSchemas.getTeams, preHandler: [server.authenticate] },
+    teamscontroller.getTeams.bind(teamscontroller),
+  );
 }

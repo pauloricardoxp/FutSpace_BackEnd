@@ -12,12 +12,23 @@ export class teamsController {
 
   async drawTeams(req: FastifyRequest, res: FastifyReply) {
     const { id } = req.params as { id: number };
+    const id_usuario = (req.user as any).id;
     try {
-      const teams = await this.teamsServices.drawTeams(Number(id));
+      const teams = await this.teamsServices.drawTeams(Number(id), id_usuario);
       res.code(200).send(teams);
     } catch (err: any) {
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
+    }
+  }
+
+  async getTeams(req: FastifyRequest, res: FastifyReply) {
+    const { id } = req.params as { id: string };
+    try {
+      const teams = await this.teamsServices.getTeams(Number(id));
+      res.code(200).send(teams);
+    } catch (err: any) {
+      res.code(500).send({ error: err.message });
     }
   }
 }
