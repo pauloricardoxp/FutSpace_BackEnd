@@ -31,13 +31,24 @@ export class eventsService {
       throw new Error("Jogador ainda não foi alocado em um time");
     }
 
+    if (data.id_assistido && data.id_assistido > 0) {
+      const assistant = await this.prisma.players.findUnique({
+        where: { id_players: data.id_assistido },
+      });
+
+      if (!assistant || assistant.id_matches !== id_matches) {
+        throw new Error("Jogador assistente não pertence a essa partida");
+      }
+    }
+
     const event = await this.prisma.events.create({
       data: {
         type: data.type,
         minute: data.minute,
         id_matches,
         id_player: data.id_player,
-        id_assistido: data.id_assistido ?? null,
+        id_assistido:
+          data.id_assistido && data.id_assistido > 0 ? data.id_assistido : null,
       },
     });
 
@@ -47,15 +58,7 @@ export class eventsService {
         data: { goals: { increment: 1 } },
       });
 
-      if (data.id_assistido) {
-        const assistant = await this.prisma.players.findUnique({
-          where: { id_players: data.id_assistido },
-        });
-
-        if (!assistant || assistant.id_matches !== id_matches) {
-          throw new Error("Jogador assistente não pertence a essa partida");
-        }
-
+      if (data.id_assistido && data.id_assistido > 0) {
         await this.prisma.events.create({
           data: {
             type: "assist",
