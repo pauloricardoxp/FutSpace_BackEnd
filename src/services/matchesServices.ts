@@ -38,7 +38,22 @@ export class matchesServices {
   async getById(id_matches: number, id_usuario: number) {
     const matches = await this.prisma.matches.findUnique({
       where: { id_matches },
-      include: { players: true },
+      include: {
+        players: {
+          select: {
+            id_players: true,
+            name: true,
+            position: true,
+            is_guest: true,
+            id_usuario: true,
+            id_time: true,
+          },
+        },
+        teams: {
+          orderBy: { id_time: "asc" },
+          take: undefined,
+        },
+      },
     });
 
     if (!matches) {
@@ -52,7 +67,45 @@ export class matchesServices {
       throw new Error("Acesso negado");
     }
 
-    return matches;
+    const totalPlayersNeeded = matches.num_teams * matches.players_per_team;
+    const playersAdded = matches.players.length;
+    const spotsAvailable = totalPlayersNeeded - playersAdded;
+
+    // Filtra apenas os times da partida (remove duplicados mantendo os primeiros)
+    const uniqueTeams = matches.teams.slice(0, matches.num_teams);
+
+    // Calcula o placar total
+    const score = uniqueTeams.map((team) => ({
+      id_time: team.id_time,
+      name: team.name,
+      goals: team.goals,
+    }));
+
+    const totalGoals = uniqueTeams.reduce((sum, team) => sum + team.goals, 0);
+
+    return {
+      match: {
+        id_matches: matches.id_matches,
+        name: matches.name,
+        location: matches.location,
+        scheduled_at: matches.scheduled_at,
+        duration_minutes: matches.duration_minutes,
+        num_teams: matches.num_teams,
+        players_per_team: matches.players_per_team,
+        status: matches.status,
+      },
+      configuration: {
+        totalPlayersNeeded,
+        playersAdded,
+        spotsAvailable,
+      },
+      score: {
+        teams: score,
+        totalGoals,
+      },
+      players: matches.players,
+      teams: uniqueTeams,
+    };
   }
 
   async start(id_matches: number, id_users: number) {
