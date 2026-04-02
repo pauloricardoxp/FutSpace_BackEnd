@@ -1,3 +1,4 @@
+import "./types/fastify";
 import fastify from "fastify";
 import jwtPlugin from "./plugins/jwt";
 import prismaPlugin from "./plugins/prisma";
