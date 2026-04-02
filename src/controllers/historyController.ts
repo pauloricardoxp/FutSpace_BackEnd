@@ -11,7 +11,7 @@ export class historyController {
   }
 
   async getHistory(req: FastifyRequest, res: FastifyReply) {
-    const { id } = req.user as { id: number };
+    const { id } = req.user as {id: number};
 
     try {
       const history = await this.historyService.getHistory(Number(id));
