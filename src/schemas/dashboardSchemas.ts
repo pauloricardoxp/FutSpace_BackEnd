@@ -29,6 +29,10 @@ export const dashboardSchemas = {
               properties: {
                 id_matches: { type: "number" },
                 name: { type: "string" },
+                status: {
+                  type: "string",
+                  enum: ["pending", "ongoing", "finished"],
+                },
                 scheduled_at: { type: "string" },
                 teams: {
                   type: "array",

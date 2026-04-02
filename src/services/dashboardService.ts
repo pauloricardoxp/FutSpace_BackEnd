@@ -19,12 +19,16 @@ export class dashboardService {
 
     const allMatches = await this.prisma.matches.findMany({
       where: {
-        status: "finished",
-        players: {
-          some: {
-            id_usuario,
-          },
-        },
+        OR: [
+          { id_usuario }, // Partidas que ele criou
+          {
+            players: {
+              some: {
+                id_usuario,
+              },
+            },
+          }, // Partidas que ele é jogador
+        ],
       },
       include: {
         teams: true,
@@ -39,17 +43,27 @@ export class dashboardService {
       },
     });
 
-    const totalMatches = allMatches.length;
+    const matchesUserPlayed = await this.prisma.matches.findMany({
+      where: {
+        players: {
+          some: {
+            id_usuario,
+          },
+        },
+      },
+    });
+
+    const totalMatches = matchesUserPlayed.length;
 
     let totalGoals = 0;
     const userGoals = allMatches.flatMap((match) =>
       match.events.filter(
-        (e) => e.type === "goal" && e.id_player === user.id_usuario,
+        (e) => e.type === "goal" && e.player.id_usuario === user.id_usuario,
       ),
     );
     totalGoals = userGoals.length;
 
-    const recentMatches = allMatches.slice(0, 5).map((match) => {
+    const recentMatches = allMatches.map((match) => {
       const goals = match.events.filter((e) => e.type === "goal");
       const assists = match.events.filter((e) => e.type === "assist");
 
@@ -76,6 +90,7 @@ export class dashboardService {
       return {
         id_matches: match.id_matches,
         name: match.name,
+        status: match.status,
         scheduled_at: match.scheduled_at,
         teams: match.teams.map((t) => ({
           id_time: t.id_time,
