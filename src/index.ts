@@ -13,6 +13,7 @@ import { eventsRoute } from "./routes/events";
 import { summaryRoute } from "./routes/summary";
 import { historyRoute } from "./routes/history";
 import { dashboardRoute } from "./routes/dashboard";
+import { healthRoute } from "./routes/health";
 import swagger from "@fastify/swagger";
 import scalarPlugin from "@scalar/fastify-api-reference";
 const server = fastify({
@@ -56,11 +57,40 @@ server.register(summaryRoute, { prefix: "/matches" });
 server.register(playersRoute, { prefix: "/players" });
 server.register(historyRoute, { prefix: "/history" });
 server.register(dashboardRoute, { prefix: "/dashboard" });
+server.register(healthRoute);
 
 const start = async () => {
   try {
     await server.listen({ port: 8080, host: "0.0.0.0" });
     console.log("Servidor rodando em http://localhost:8080");
+
+    console.log("\nIniciando auto-ping a cada 5 minutos...\n");
+
+    setInterval(
+      async () => {
+        try {
+          const response = await fetch("http://localhost:8080/ping");
+          const data = await response.json();
+          console.log(
+            `\n PING OK - ${new Date().toLocaleString("pt-BR")} - Status: ${data.status}\n`,
+          );
+        } catch (err) {
+          console.error(
+            `\n PING ERRO - ${new Date().toLocaleString("pt-BR")} - ${err}\n`,
+          );
+        }
+      },
+      5 * 60 * 1000,
+    );
+    setTimeout(async () => {
+      try {
+        const response = await fetch("http://localhost:8080/ping");
+        const data = await response.json();
+        console.log(`\n PING INICIAL OK - Status: ${data.status}\n`);
+      } catch (err) {
+        console.error(`\n PING INICIAL ERRO - ${err}\n`);
+      }
+    }, 2000);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
