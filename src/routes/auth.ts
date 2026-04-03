@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { authController } from "../controllers/authController";
-import { authSchemas } from "../schemas/authSchemas";
+import { authController } from "../controllers/authController.js";
+import { authSchemas } from "../schemas/authSchemas.js";
 
 export async function authRoutes(server: FastifyInstance) {
   const authcontroller = new authController(server.prisma);

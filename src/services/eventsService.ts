@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { eventCreate } from "../types/events";
+import { eventCreate } from "../types/events.js";
 
 export class eventsService {
   constructor(private prisma: PrismaClient) {}

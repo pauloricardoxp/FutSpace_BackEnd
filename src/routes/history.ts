@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { historyController } from "../controllers/historyController";
-import { historySchemas } from "../schemas/historySchemas";
+import { historyController } from "../controllers/historyController.js";
+import { historySchemas } from "../schemas/historySchemas.js";
 
 export async function historyRoute(server: FastifyInstance) {
   const controller = new historyController(server.prisma);

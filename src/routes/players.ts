@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { playersController } from "../controllers/playerController";
-import { playersSchemas } from "../schemas/playersSchemas";
+import { playersController } from "../controllers/playerController.js";
+import { playersSchemas } from "../schemas/playersSchemas.js";
 
 export async function playersRoute(server: FastifyInstance) {
   const playercontroller = new playersController(server.prisma);

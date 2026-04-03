@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { matchesServices } from "../services/matchesServices";
+import { matchesServices } from "../services/matchesServices.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { matchesCreate } from "../types/matches";
-import { handleError } from "../utils/errorHandler";
+import { matchesCreate } from "../types/matches.js";
+import { handleError } from "../utils/errorHandler.js";
 
 export class matchesController {
   private matchesService: matchesServices;

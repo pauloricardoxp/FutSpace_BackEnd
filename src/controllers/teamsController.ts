@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { teamsService } from "../services/teamsService";
+import { teamsService } from "../services/teamsService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler";
+import { handleError } from "../utils/errorHandler.js";
 
 export class teamsController {
   private teamsServices: teamsService;

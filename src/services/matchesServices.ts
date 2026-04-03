@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { matchesCreate } from "../types/matches";
+import { matchesCreate } from "../types/matches.js";
 
 export class matchesServices {
   constructor(private prisma: PrismaClient) {}

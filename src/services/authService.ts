@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { authLogin, authRegister } from "../types/auth";
+import { authLogin, authRegister } from "../types/auth.js";
 import bcrypt from "bcrypt";
 import {
   validateEmail,
   validatePassword,
   validateName,
-} from "../utils/validators";
+} from "../utils/validators.js";
 
 export class authService {
   constructor(private prisma: PrismaClient) {}

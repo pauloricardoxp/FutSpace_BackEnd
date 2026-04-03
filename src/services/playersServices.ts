@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { playersCreate } from "../types/players";
-import { useType } from "../types/auth";
+import { playersCreate } from "../types/players.js";
 
 export class playerServices {
   constructor(private prisma: PrismaClient) {}

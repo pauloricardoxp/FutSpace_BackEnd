@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { dashboardService } from "../services/dashboardService";
+import { dashboardService } from "../services/dashboardService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler";
+import { handleError } from "../utils/errorHandler.js";
 
 export class dashboardController {
   private dashboardService: dashboardService;

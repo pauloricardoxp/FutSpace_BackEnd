@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { historyService } from "../services/historyService";
+import { historyService } from "../services/historyService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler";
+import { handleError } from "../utils/errorHandler.js";
 
 export class historyController {
   private historyService: historyService;

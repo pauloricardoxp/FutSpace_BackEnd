@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { summaryService } from "../services/summaryService";
+import { summaryService } from "../services/summaryService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler";
+import { handleError } from "../utils/errorHandler.js";
 
 export class summaryController {
   private summaryService: summaryService;

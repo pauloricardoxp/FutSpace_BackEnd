@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { summaryController } from "../controllers/summaryController";
-import { summarySchemas } from "../schemas/summarySchemas";
+import { summaryController } from "../controllers/summaryController.js";
+import { summarySchemas } from "../schemas/summarySchemas.js";
 
 export async function summaryRoute(server: FastifyInstance) {
   const controller = new summaryController(server.prisma);

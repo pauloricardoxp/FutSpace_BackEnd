@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { authService } from "../services/authService";
+import { authService } from "../services/authService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { authLogin, authRegister } from "../types/auth";
-import { handleError } from "../utils/errorHandler";
+import { authLogin, authRegister } from "../types/auth.js";
+import { handleError } from "../utils/errorHandler.js";
 
 export class authController {
   private authService: authService;

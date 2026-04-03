@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { teamsController } from "../controllers/teamsController";
-import { teamsSchemas } from "../schemas/teamsSchemas";
+import { teamsController } from "../controllers/teamsController.js";
+import { teamsSchemas } from "../schemas/teamsSchemas.js";
 
 export async function teamsRoute(server: FastifyInstance) {
   const teamscontroller = new teamsController(server.prisma);

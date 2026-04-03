@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { dashboardController } from "../controllers/dashboardController";
-import { dashboardSchemas } from "../schemas/dashboardSchemas";
+import { dashboardController } from "../controllers/dashboardController.js";
+import { dashboardSchemas } from "../schemas/dashboardSchemas.js";
 
 export async function dashboardRoute(fastify: FastifyInstance) {
   const dashboardcontroller = new dashboardController(fastify.prisma);

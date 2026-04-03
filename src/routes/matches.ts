@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { matchesController } from "../controllers/matchesController";
-import { matchesSchemas } from "../schemas/matchesSchemas";
+import { matchesController } from "../controllers/matchesController.js";
+import { matchesSchemas } from "../schemas/matchesSchemas.js";
 
 export async function matchesRoute(server: FastifyInstance) {
   const matchescontroller = new matchesController(server.prisma);

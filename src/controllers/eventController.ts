@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { eventsService } from "../services/eventsService";
+import { eventsService } from "../services/eventsService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { eventCreate } from "../types/events";
-import { handleError } from "../utils/errorHandler";
+import { eventCreate } from "../types/events.js";
+import { handleError } from "../utils/errorHandler.js";
 
 export class eventController {
   private eventService: eventsService;

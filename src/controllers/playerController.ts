@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { playerServices } from "../services/playersServices";
+import { playerServices } from "../services/playersServices.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { playersCreate } from "../types/players";
-import { handleError } from "../utils/errorHandler";
+import { playersCreate } from "../types/players.js";
+import { handleError } from "../utils/errorHandler.js";
 
 export class playersController {
   private playersService: playerServices;
