@@ -56,7 +56,15 @@ export class teamsService {
     const shuffledGoalkeepers = this.shuffle(goalkeepers);
     const shuffledOutfield = this.shuffle(outfield);
 
-    const results = [];
+    const results: {
+      team: {
+        id_time: number;
+        name: string;
+        id_matches: number;
+        goals: number;
+      };
+      players: typeof players;
+    }[] = [];
 
     for (let i = 0; i < match.num_teams; i++) {
       const team = await this.prisma.teams.create({
