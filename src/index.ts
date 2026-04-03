@@ -57,6 +57,10 @@ server.register(playersRoute, { prefix: "/players" });
 server.register(historyRoute, { prefix: "/history" });
 server.register(dashboardRoute, { prefix: "/dashboard" });
 
+server.get("/", async (request, reply) => {
+  return { status: "ok" };
+});
+
 const start = async () => {
   try {
     await server.listen({ port: 8080, host: "0.0.0.0" });
