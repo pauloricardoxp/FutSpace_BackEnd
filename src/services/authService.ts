@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { authLogin, authRegister } from "../types/auth.js";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 import {
   validateEmail,
   validatePassword,
