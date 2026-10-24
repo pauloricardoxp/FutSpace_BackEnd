@@ -13,6 +13,7 @@ export const dashboardSchemas = {
               id_usuario: { type: "number" },
               name: { type: "string" },
               email: { type: "string" },
+              photo: { type: ["string", "null"] },
             },
           },
           stats: {

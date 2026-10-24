@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { historyService } from "../services/historyService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class historyController {
   private historyService: historyService;
@@ -17,7 +17,7 @@ export class historyController {
       const history = await this.historyService.getHistory(Number(id));
       res.code(200).send(history);
     } catch (err: any) {
-      req.log.error({ err }, "History request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "History request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

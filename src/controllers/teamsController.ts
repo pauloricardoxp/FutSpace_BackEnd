@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { teamsService } from "../services/teamsService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class teamsController {
   private teamsServices: teamsService;
@@ -17,7 +17,7 @@ export class teamsController {
       const teams = await this.teamsServices.drawTeams(Number(id), id_usuario);
       res.code(200).send(teams);
     } catch (err: any) {
-      req.log.error({ err }, "Team request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Team request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -30,7 +30,7 @@ export class teamsController {
       const teams = await this.teamsServices.getTeams(Number(id), id_usuario);
       res.code(200).send(teams);
     } catch (err: any) {
-      req.log.error({ err }, "Team request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Team request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

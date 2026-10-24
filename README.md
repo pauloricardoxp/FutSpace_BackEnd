@@ -111,6 +111,26 @@ GET    /history                 # Histórico do usuário
 GET    /dashboard               # Dashboard com estatísticas
 ```
 
+### Perfil esportivo
+
+O cadastro cria primeiro a conta e devolve um token. O perfil esportivo pode ser
+criado depois em `/me/profiles`. As categorias disponíveis são `futsal`,
+`society` e `campo`, e as posições são fornecidas por `GET /meta/sports`.
+O número é o número da camisa, de 1 a 99. A posição usada pelo sorteio continua
+sendo a posição macro `goleiro` ou `linha`.
+
+```
+GET    /me
+PATCH  /me
+GET    /me/profiles
+POST   /me/profiles
+PUT    /me/profiles/:id_profile
+DELETE /me/profiles/:id_profile
+POST   /me/photo
+DELETE /me/photo
+GET    /meta/sports
+```
+
 ### Health Check
 
 ```
@@ -246,6 +266,9 @@ Veja `.env.example` para template completo.
 - `NODE_ENV` - development/production
 - `FRONTEND_URL` - Origem permitida pelo CORS
 
+No Render, configure também `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` e
+`CLOUDINARY_API_SECRET` para habilitar o upload de fotos.
+
 ## Stack
 
 - **Fastify** - Framework web
@@ -275,6 +298,8 @@ https://seu-backend.onrender.com/docs
 
 O servidor pode entrar em modo de espera no plano gratuito.
 Um endpoint `/ping` foi implementado para manter a API responsiva.
+O deploy executa `prisma generate` no build e `prisma migrate deploy` antes de
+iniciar a aplicação.
 
 ## Licença
 

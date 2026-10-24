@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { playerServices } from "../services/playersServices.js";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { playersCreate } from "../types/players.js";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class playersController {
   private playersService: playerServices;
@@ -24,23 +24,23 @@ export class playersController {
       );
       res.code(201).send(players);
     } catch (err: any) {
-      req.log.error({ err }, "Player request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
   }
 
   async searchPlayers(req: FastifyRequest, res: FastifyReply) {
-    const { name } = req.query as { name: string };
+    const { name, category } = req.query as { name: string; category?: string };
 
     if (!name || name.trim() === "") {
       return res.code(400).send({ error: "Informe um nome para buscar" });
     }
     try {
-      const players = await this.playersService.searchUsers(name);
+      const players = await this.playersService.searchUsers(name, category);
       res.code(200).send(players);
     } catch (err: any) {
-      req.log.error({ err }, "Player request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -61,7 +61,7 @@ export class playersController {
       );
       res.code(200).send(result);
     } catch (err: any) {
-      req.log.error({ err }, "Player request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

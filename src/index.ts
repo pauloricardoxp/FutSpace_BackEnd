@@ -16,6 +16,9 @@ import { dashboardRoute } from "./routes/dashboard.js";
 import swagger from "@fastify/swagger";
 import scalarPlugin from "@scalar/fastify-api-reference";
 import { healthRoute } from "./routes/health.js";
+import multipartPlugin from "./plugins/multipart.js";
+import { meRoutes } from "./routes/me.js";
+import { metaRoutes } from "./routes/meta.js";
 const server = fastify({
   logger: true,
 });
@@ -48,6 +51,7 @@ server.register(rateLimitPlugin);
 server.register(corsPlugin);
 server.register(jwtPlugin);
 server.register(prismaPlugin);
+server.register(multipartPlugin);
 server.register(healthRoute);
 
 server.register(authRoutes, { prefix: "/auth" });
@@ -58,6 +62,8 @@ server.register(summaryRoute, { prefix: "/matches" });
 server.register(playersRoute, { prefix: "/players" });
 server.register(historyRoute, { prefix: "/history" });
 server.register(dashboardRoute, { prefix: "/dashboard" });
+server.register(meRoutes, { prefix: "/me" });
+server.register(metaRoutes, { prefix: "/meta" });
 
 server.get("/", async (request, reply) => {
   return { status: "ok" };

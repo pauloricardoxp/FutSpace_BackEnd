@@ -15,3 +15,7 @@ export function handleError(err: unknown) {
 
   return { statusCode: 500, message: "Erro interno do servidor" };
 }
+
+export function shouldLogError(err: unknown) {
+  return !(err instanceof AppError) || err.statusCode >= 500;
+}

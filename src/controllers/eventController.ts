@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { eventsService } from "../services/eventsService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { eventCreate } from "../types/events.js";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class eventController {
   private eventService: eventsService;
@@ -20,7 +20,7 @@ export class eventController {
       const events = await this.eventService.create(Number(id), id_usuario, body);
       res.code(201).send(events);
     } catch (err: any) {
-      req.log.error({ err }, "Event request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Event request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

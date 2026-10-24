@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { matchesCreate } from "../types/matches.js";
 import { AppError } from "../utils/errorHandler.js";
+import { isValidSport } from "../utils/sports.js";
 
 export class matchesServices {
   constructor(private prisma: PrismaClient) {}
@@ -21,10 +22,23 @@ export class matchesServices {
     if (!data.duration_minutes) {
       throw new AppError("A duração da partida é obrigatória", 400);
     }
+    if (!data.category) {
+      throw new AppError("A categoria da partida é obrigatória", 400);
+    }
+    if (data.sport && !isValidSport(data.sport)) {
+      throw new AppError("Esporte inválido", 400);
+    }
 
     return await this.prisma.matches.create({
       data: {
-        ...data,
+        name: data.name,
+        location: data.location,
+        scheduled_at: data.scheduled_at,
+        duration_minutes: data.duration_minutes,
+        num_teams: data.num_teams,
+        players_per_team: data.players_per_team,
+        sport: data.sport ?? "futebol",
+        category: data.category,
         id_usuario,
       },
     });
@@ -48,6 +62,9 @@ export class matchesServices {
             is_guest: true,
             id_usuario: true,
             id_time: true,
+            shirt_number: true,
+            field_position: true,
+            users: { select: { photo: true } },
           },
         },
         teams: {
@@ -83,6 +100,10 @@ export class matchesServices {
     }));
 
     const totalGoals = uniqueTeams.reduce((sum, team) => sum + team.goals, 0);
+    const players = matches.players.map(({ users, ...player }) => ({
+      ...player,
+      photo: users?.photo ?? null,
+    }));
 
     return {
       match: {
@@ -104,7 +125,7 @@ export class matchesServices {
         teams: score,
         totalGoals,
       },
-      players: matches.players,
+      players,
       teams: uniqueTeams,
     };
   }

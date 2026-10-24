@@ -37,13 +37,16 @@ export class authService {
 
     return await this.prisma.users.create({
       data: {
-        ...data,
+        name: data.name,
+        email: data.email,
         password: passwordHash,
       },
       select: {
         id_usuario: true,
         name: true,
         email: true,
+        photo: true,
+        profiles: { select: { id_profile: true } },
       },
     });
   }
@@ -55,6 +58,7 @@ export class authService {
 
     const users = await this.prisma.users.findUnique({
       where: { email: data.email },
+      include: { profiles: { select: { id_profile: true } } },
     });
 
     if (!users) {
@@ -71,6 +75,8 @@ export class authService {
       id_usuario: users.id_usuario,
       name: users.name,
       email: users.email,
+      photo: users.photo,
+      has_profile: users.profiles.length > 0,
     };
   }
 }

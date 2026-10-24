@@ -4,6 +4,7 @@ export const authSchemas = {
     summary: "Registrar no FutSpace",
     body: {
       type: "object",
+      additionalProperties: false,
       required: ["name", "email", "password"],
       properties: {
         name: { type: "string", default: "Paulo Ricardo" },
@@ -15,9 +16,12 @@ export const authSchemas = {
       201: {
         type: "object",
         properties: {
+          token: { type: "string" },
           id_usuario: { type: "number" },
           name: { type: "string" },
           email: { type: "string" },
+          photo: { type: ["string", "null"] },
+          has_profile: { type: "boolean" },
         },
       },
     },
@@ -28,6 +32,7 @@ export const authSchemas = {
     summary: "Login no FutSpace",
     body: {
       type: "object",
+      additionalProperties: false,
       required: ["email", "password"],
       properties: {
         email: { type: "string", default: "paulo@email.com" },
@@ -42,6 +47,8 @@ export const authSchemas = {
           id_usuario: { type: "number" },
           name: { type: "string" },
           email: { type: "string" },
+          photo: { type: ["string", "null"] },
+          has_profile: { type: "boolean" },
         },
       },
     },

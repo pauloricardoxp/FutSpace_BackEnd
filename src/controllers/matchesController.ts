@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { matchesServices } from "../services/matchesServices.js";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { matchesCreate } from "../types/matches.js";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class matchesController {
   private matchesService: matchesServices;
@@ -19,7 +19,7 @@ export class matchesController {
       const matches = await this.matchesService.create(body, id);
       res.code(201).send(matches);
     } catch (err: any) {
-      req.log.error({ err }, "Match request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -31,7 +31,7 @@ export class matchesController {
       const matches = await this.matchesService.getByUsers(id);
       res.code(200).send(matches);
     } catch (err: any) {
-      req.log.error({ err }, "Match request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -44,7 +44,7 @@ export class matchesController {
       const matches = await this.matchesService.getById(Number(id), userId);
       res.code(200).send(matches);
     } catch (err: any) {
-      req.log.error({ err }, "Match request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -57,7 +57,7 @@ export class matchesController {
       const matches = await this.matchesService.start(Number(id_matches), id);
       res.code(200).send(matches);
     } catch (err: any) {
-      req.log.error({ err }, "Match request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -70,7 +70,7 @@ export class matchesController {
       const matches = await this.matchesService.finish(Number(id_matches), id);
       res.code(200).send(matches);
     } catch (err: any) {
-      req.log.error({ err }, "Match request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

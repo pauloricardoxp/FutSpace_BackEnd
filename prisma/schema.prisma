@@ -8,13 +8,16 @@ datasource db {
 }
 
 model Users {
-  id_usuario Int       @id @default(autoincrement())
-  name       String    @db.VarChar(100)
-  email      String    @unique @db.VarChar(100)
-  password   String    @db.VarChar(255)
-  created_at DateTime  @default(now())
-  matches    Matches[]
-  players    Players[]
+  id_usuario    Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  photo         String?         @db.VarChar(500)
+  email         String          @unique @db.VarChar(100)
+  password      String          @db.VarChar(255)
+  created_at    DateTime        @default(now())
+  matches       Matches[]
+  players       Players[]
+  profiles      PlayerProfiles[]
+  Championships Championships[]
 }
 
 model Matches {
@@ -29,10 +32,13 @@ model Matches {
   created_at       DateTime  @default(now())
   finished_at      DateTime?
   id_usuario       Int
+  sport            Sport     @default(futebol)
+  category         Category  @default(society)
   users            Users     @relation(fields: [id_usuario], references: [id_usuario])
   teams            Teams[]
   players          Players[]
   events           Events[]
+  Fixtures         Fixtures?
 }
 
 model Teams {
@@ -48,6 +54,8 @@ model Players {
   id_players      Int      @id @default(autoincrement())
   name            String   @db.VarChar(100)
   position        Position
+  field_position  FieldPosition?
+  shirt_number    Int?
   is_guest        Boolean  @default(false)
   id_usuario      Int?
   users           Users?   @relation(fields: [id_usuario], references: [id_usuario])
@@ -86,4 +94,103 @@ enum Position {
 enum Type {
   goal
   assist
+}
+
+enum Sport {
+  futebol
+}
+
+enum Category {
+  futsal
+  society
+  campo
+}
+
+enum FieldPosition {
+  goleiro
+  fixo
+  pivo
+  ala
+  zagueiro
+  lateral
+  volante
+  meia
+  atacante
+}
+
+model PlayerProfiles {
+  id_profile   Int           @id @default(autoincrement())
+  id_usuario   Int
+  sport        Sport         @default(futebol)
+  category     Category
+  position     FieldPosition
+  shirt_number Int?
+  created_at   DateTime      @default(now())
+  users        Users         @relation(fields: [id_usuario], references: [id_usuario])
+
+  @@unique([id_usuario, sport, category])
+}
+
+model Championships {
+  id_championship  Int                 @id @default(autoincrement())
+  name             String              @db.VarChar(100)
+  sport            ChampionshipSport
+  format           ChampionshipFormat  @default(league)
+  players_per_team Int
+  status           ChampionshipStatus  @default(pending)
+  created_at       DateTime            @default(now())
+  id_usuario       Int
+  users            Users               @relation(fields: [id_usuario], references: [id_usuario])
+  teams            ChampionshipTeams[]
+  fixtures         Fixtures[]
+}
+
+model ChampionshipTeams {
+  id_championship_team Int           @id @default(autoincrement())
+  name                 String        @db.VarChar(50)
+  id_championship      Int
+  championship         Championships @relation(fields: [id_championship], references: [id_championship])
+  standing             Standings?
+  fixturesAsA          Fixtures[]    @relation("FixtureTeamA")
+  fixturesAsB          Fixtures[]    @relation("FixtureTeamB")
+}
+
+model Fixtures {
+  id_fixture      Int               @id @default(autoincrement())
+  id_championship Int
+  championship    Championships     @relation(fields: [id_championship], references: [id_championship])
+  round_number    Int
+  id_team_a       Int
+  team_a          ChampionshipTeams @relation("FixtureTeamA", fields: [id_team_a], references: [id_championship_team])
+  id_team_b       Int
+  team_b          ChampionshipTeams @relation("FixtureTeamB", fields: [id_team_b], references: [id_championship_team])
+  id_matches      Int?              @unique
+  matches         Matches?          @relation(fields: [id_matches], references: [id_matches])
+}
+
+model Standings {
+  id_championship_team Int               @id
+  championshipTeam     ChampionshipTeams @relation(fields: [id_championship_team], references: [id_championship_team])
+  points               Int               @default(0)
+  wins                 Int               @default(0)
+  draws                Int               @default(0)
+  losses               Int               @default(0)
+  score_for            Int               @default(0)
+  score_against        Int               @default(0)
+}
+
+enum ChampionshipSport {
+  futebol
+  fifa
+}
+
+enum ChampionshipFormat {
+  league
+  knockout
+}
+
+enum ChampionshipStatus {
+  pending
+  ongoing
+  finished
 }

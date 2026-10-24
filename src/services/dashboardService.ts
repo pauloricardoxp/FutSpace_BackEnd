@@ -12,6 +12,7 @@ export class dashboardService {
         id_usuario: true,
         name: true,
         email: true,
+        photo: true,
       },
     });
 

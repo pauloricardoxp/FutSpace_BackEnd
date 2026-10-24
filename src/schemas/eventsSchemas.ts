@@ -5,6 +5,7 @@ export const eventsSchemas = {
     summary: "Registrar gol ou assistência",
     body: {
       type: "object",
+      additionalProperties: false,
       required: ["type", "minute", "id_player"],
       properties: {
         type: { type: "string", enum: ["goal"], default: "goal" },

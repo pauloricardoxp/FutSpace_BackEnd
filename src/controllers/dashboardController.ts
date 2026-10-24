@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { dashboardService } from "../services/dashboardService.js";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { handleError } from "../utils/errorHandler.js";
+import { handleError, shouldLogError } from "../utils/errorHandler.js";
 
 export class dashboardController {
   private dashboardService: dashboardService;
@@ -16,7 +16,7 @@ export class dashboardController {
       const dashboard = await this.dashboardService.getDashboard(id_usuario);
       res.code(200).send(dashboard);
     } catch (err: any) {
-      req.log.error({ err }, "Dashboard request failed");
+      if (shouldLogError(err)) req.log.error({ err }, "Dashboard request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

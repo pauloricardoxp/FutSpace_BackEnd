@@ -5,14 +5,19 @@ export const playersSchemas = {
     summary: "Adicionar jogador à partida",
     body: {
       type: "object",
-      required: ["name", "position", "is_guest"],
+      additionalProperties: false,
+      required: ["name", "is_guest"],
       properties: {
         name: { type: "string", default: "Paulo Ricardo" },
         position: {
           type: "string",
           enum: ["linha", "goleiro"],
-          default: "linha",
         },
+        field_position: {
+          type: "string",
+          enum: ["goleiro", "fixo", "ala", "pivo", "zagueiro", "lateral", "volante", "meia", "atacante"],
+        },
+        shirt_number: { type: ["integer", "null"], minimum: 1, maximum: 99 },
         is_guest: { type: "boolean", default: true },
         id_usuario: { type: "number", default: null },
       },
@@ -38,6 +43,7 @@ export const playersSchemas = {
       required: ["name"],
       properties: {
         name: { type: "string", default: "Paulo" },
+        category: { type: "string", enum: ["futsal", "society", "campo"] },
       },
     },
     response: {
@@ -49,6 +55,17 @@ export const playersSchemas = {
             id_usuario: { type: "number" },
             name: { type: "string" },
             photo: { type: ["string", "null"] },
+            profiles: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  category: { type: "string" },
+                  position: { type: "string" },
+                  shirt_number: { type: ["number", "null"] },
+                },
+              },
+            },
           },
         },
       },
