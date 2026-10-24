@@ -15,6 +15,7 @@ import { historyRoute } from "./routes/history.js";
 import { dashboardRoute } from "./routes/dashboard.js";
 import swagger from "@fastify/swagger";
 import scalarPlugin from "@scalar/fastify-api-reference";
+import { healthRoute } from "./routes/health.js";
 const server = fastify({
   logger: true,
 });
@@ -47,6 +48,7 @@ server.register(rateLimitPlugin);
 server.register(corsPlugin);
 server.register(jwtPlugin);
 server.register(prismaPlugin);
+server.register(healthRoute);
 
 server.register(authRoutes, { prefix: "/auth" });
 server.register(matchesRoute, { prefix: "/matches" });

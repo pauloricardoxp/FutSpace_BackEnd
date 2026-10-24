@@ -1,21 +1,27 @@
 import { PrismaClient } from "@prisma/client";
 import { eventCreate } from "../types/events.js";
+import { AppError } from "../utils/errorHandler.js";
 
 export class eventsService {
   constructor(private prisma: PrismaClient) {}
 
-  async create(id_matches: number, data: eventCreate) {
+  async create(id_matches: number, id_usuario: number, data: eventCreate) {
     const match = await this.prisma.matches.findUnique({
       where: { id_matches },
     });
 
     if (!match) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
+    }
+
+    if (match.id_usuario !== id_usuario) {
+      throw new AppError("Você não tem permissão para registrar eventos desta partida", 403);
     }
 
     if (match.status !== "ongoing") {
-      throw new Error(
+      throw new AppError(
         "A partida precisa estar em andamento para registrar eventos",
+        422,
       );
     }
 
@@ -24,11 +30,11 @@ export class eventsService {
     });
 
     if (!player || player.id_matches !== id_matches) {
-      throw new Error("Jogador não pertence a essa partida");
+      throw new AppError("Jogador não pertence a essa partida", 403);
     }
 
     if (!player.id_time) {
-      throw new Error("Jogador ainda não foi alocado em um time");
+      throw new AppError("Jogador ainda não foi alocado em um time", 422);
     }
 
     if (data.id_assistido && data.id_assistido > 0) {
@@ -37,7 +43,7 @@ export class eventsService {
       });
 
       if (!assistant || assistant.id_matches !== id_matches) {
-        throw new Error("Jogador assistente não pertence a essa partida");
+        throw new AppError("Jogador assistente não pertence a essa partida", 403);
       }
     }
 

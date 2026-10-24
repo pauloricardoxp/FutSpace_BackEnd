@@ -77,15 +77,15 @@ POST   /auth/login             # Fazer login
 ```
 GET    /matches                # Listar partidas
 POST   /matches                # Criar partida
-GET    /matches/:id_matches    # Detalhes da partida
-PATCH  /matches/:id/start      # Iniciar partida
-PATCH  /matches/:id/finish     # Finalizar partida
+GET    /matches/:id            # Detalhes da partida
+PATCH  /matches/:id_matches/start      # Iniciar partida
+PATCH  /matches/:id_matches/finish     # Finalizar partida
 ```
 
 ### Jogadores
 
 ```
-POST   /players/:id_matches                    # Adicionar jogador
+POST   /players/:id/add                        # Adicionar jogador
 GET    /players/search                         # Buscar jogadores
 DELETE /players/:id_matches/:id_players        # Remover jogador
 ```
@@ -101,7 +101,6 @@ GET    /matches/:id/teams         # Listar times da partida
 
 ```
 POST   /matches/:id/events      # Registrar evento (gol/assist)
-GET    /matches/:id/events      # Listar eventos
 ```
 
 ### Estatísticas
@@ -147,6 +146,7 @@ curl -X POST http://localhost:8080/matches \
   -d '{
     "name": "Pelada de Quinta",
     "location": "Parque Central",
+    "scheduled_at": "2026-10-30T18:00:00Z",
     "duration_minutes": 90,
     "num_teams": 2,
     "players_per_team": 5
@@ -238,12 +238,13 @@ Veja `.env.example` para template completo.
 **Necessárias:**
 
 - `DATABASE_URL` - Banco PostgreSQL
-- `JWT_SECRET` - Chave para assinar tokens
+- `JWT_SECRET` - Chave obrigatória para assinar tokens
 
 **Opcionais:**
 
 - `CLOUDINARY_*` - Se quiser upload de imagens
 - `NODE_ENV` - development/production
+- `FRONTEND_URL` - Origem permitida pelo CORS
 
 ## Stack
 

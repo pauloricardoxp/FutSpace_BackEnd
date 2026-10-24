@@ -6,22 +6,23 @@ import {
   validatePassword,
   validateName,
 } from "../utils/validators.js";
+import { AppError } from "../utils/errorHandler.js";
 
 export class authService {
   constructor(private prisma: PrismaClient) {}
 
   async register(data: authRegister) {
     if (!validateName(data.name)) {
-      throw new Error("Nome deve ter entre 3 e 100 caracteres");
+      throw new AppError("Nome deve ter entre 3 e 100 caracteres", 400);
     }
 
     if (!validateEmail(data.email)) {
-      throw new Error("Email inválido");
+      throw new AppError("Email inválido", 400);
     }
 
     const passwordValidation = validatePassword(data.password);
     if (!passwordValidation.valid) {
-      throw new Error(passwordValidation.errors.join(". "));
+      throw new AppError(passwordValidation.errors.join(". "), 400);
     }
 
     const exists = await this.prisma.users.findUnique({
@@ -29,7 +30,7 @@ export class authService {
     });
 
     if (exists) {
-      throw new Error("Email já cadastrado");
+      throw new AppError("Email já cadastrado", 409);
     }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
@@ -49,7 +50,7 @@ export class authService {
 
   async login(data: authLogin) {
     if (!validateEmail(data.email)) {
-      throw new Error("Email inválido");
+      throw new AppError("Email inválido", 400);
     }
 
     const users = await this.prisma.users.findUnique({
@@ -57,13 +58,13 @@ export class authService {
     });
 
     if (!users) {
-      throw new Error("Email ou senha inválidos");
+      throw new AppError("Email ou senha inválidos", 401);
     }
 
     const passwordValid = await bcrypt.compare(data.password, users.password);
 
     if (!passwordValid) {
-      throw new Error("Email ou senha inválidos");
+      throw new AppError("Email ou senha inválidos", 401);
     }
 
     return {

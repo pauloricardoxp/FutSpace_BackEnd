@@ -1,6 +1,7 @@
 export const historySchemas = {
   getHistory: {
     tags: ["History"],
+    security: [{ bearerAuth: [] }],
     summary: "Obter histórico de partidas do usuário",
     response: {
       200: {

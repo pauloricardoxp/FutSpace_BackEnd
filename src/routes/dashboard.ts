@@ -1,16 +1,14 @@
 import { FastifyInstance } from "fastify";
 import { dashboardController } from "../controllers/dashboardController.js";
 import { dashboardSchemas } from "../schemas/dashboardSchemas.js";
+import { eventController } from "../controllers/eventController.js";
 
-export async function dashboardRoute(fastify: FastifyInstance) {
-  const dashboardcontroller = new dashboardController(fastify.prisma);
+export async function dashboardRoute(server: FastifyInstance) {
+  const dashboardcontroller = new dashboardController(server.prisma);
 
-  fastify.get(
+  server.get(
     "/",
-    { schema: dashboardSchemas.getDashboard },
-    async (req, res) => {
-      await fastify.authenticate(req, res);
-      await dashboardcontroller.getDashboard(req, res);
-    },
+    { schema: dashboardSchemas.getDashboard, preHandler: [server.authenticate] },
+    dashboardcontroller.getDashboard.bind(dashboardcontroller),
   );
 }

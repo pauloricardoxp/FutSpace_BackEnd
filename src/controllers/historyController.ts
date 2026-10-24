@@ -17,6 +17,7 @@ export class historyController {
       const history = await this.historyService.getHistory(Number(id));
       res.code(200).send(history);
     } catch (err: any) {
+      req.log.error({ err }, "History request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

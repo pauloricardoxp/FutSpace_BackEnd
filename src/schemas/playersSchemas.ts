@@ -1,6 +1,7 @@
 export const playersSchemas = {
   add: {
     tags: ["Players"],
+    security: [{ bearerAuth: [] }],
     summary: "Adicionar jogador à partida",
     body: {
       type: "object",
@@ -30,6 +31,7 @@ export const playersSchemas = {
 
   search: {
     tags: ["Players"],
+    security: [{ bearerAuth: [] }],
     summary: "Buscar usuários por nome",
     querystring: {
       type: "object",
@@ -46,7 +48,7 @@ export const playersSchemas = {
           properties: {
             id_usuario: { type: "number" },
             name: { type: "string" },
-            email: { type: "string" },
+            photo: { type: ["string", "null"] },
           },
         },
       },
@@ -55,6 +57,7 @@ export const playersSchemas = {
 
   delete: {
     tags: ["Players"],
+    security: [{ bearerAuth: [] }],
     summary: "Remover jogador da partida",
     params: {
       type: "object",

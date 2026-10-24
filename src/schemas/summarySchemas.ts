@@ -1,6 +1,7 @@
 export const summarySchemas = {
   getMatchSummary: {
     tags: ["Summary"],
+    security: [{ bearerAuth: [] }],
     summary: "Obter resumo completo da partida",
     params: {
       type: "object",

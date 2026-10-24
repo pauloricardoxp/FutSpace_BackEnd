@@ -19,6 +19,7 @@ export class matchesController {
       const matches = await this.matchesService.create(body, id);
       res.code(201).send(matches);
     } catch (err: any) {
+      req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -30,6 +31,7 @@ export class matchesController {
       const matches = await this.matchesService.getByUsers(id);
       res.code(200).send(matches);
     } catch (err: any) {
+      req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -42,6 +44,7 @@ export class matchesController {
       const matches = await this.matchesService.getById(Number(id), userId);
       res.code(200).send(matches);
     } catch (err: any) {
+      req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -54,6 +57,7 @@ export class matchesController {
       const matches = await this.matchesService.start(Number(id_matches), id);
       res.code(200).send(matches);
     } catch (err: any) {
+      req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -66,6 +70,7 @@ export class matchesController {
       const matches = await this.matchesService.finish(Number(id_matches), id);
       res.code(200).send(matches);
     } catch (err: any) {
+      req.log.error({ err }, "Match request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

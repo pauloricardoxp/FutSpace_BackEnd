@@ -17,6 +17,7 @@ export class authController {
       const users = await this.authService.register(body);
       res.code(201).send(users);
     } catch (err: any) {
+      req.log.error({ err }, "Auth request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -38,6 +39,7 @@ export class authController {
         email: users.email,
       });
     } catch (err: any) {
+      req.log.error({ err }, "Auth request failed");
       const { statusCode, message } = handleError(err);
       return res.code(statusCode).send({ error: message });
     }

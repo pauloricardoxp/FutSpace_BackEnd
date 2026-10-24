@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { aggregatePlayerStats } from "../utils/playerStats.js";
 
 export class historyService {
   constructor(private prisma: PrismaClient) {}
@@ -46,33 +47,12 @@ export class historyService {
     });
 
     const matchHistory = matches.map((match) => {
-      const goals = match.events.filter((e) => e.type === "goal");
-      const assists = match.events.filter((e) => e.type === "assist");
-
       const userTeam = match.players.find((p) => p.id_usuario === id_usuario);
       const userTeamName = userTeam?.id_time
         ? match.teams.find((t) => t.id_time === userTeam.id_time)?.name
         : null;
 
-      const topScorers = Object.values(
-        goals.reduce((acc: any, e) => {
-          if (!acc[e.id_player]) {
-            acc[e.id_player] = { name: e.player.name, goals: 0 };
-          }
-          acc[e.id_player].goals += 1;
-          return acc;
-        }, {}),
-      ).sort((a: any, b: any) => b.goals - a.goals);
-
-      const topAssists = Object.values(
-        assists.reduce((acc: any, e) => {
-          if (!acc[e.id_player]) {
-            acc[e.id_player] = { name: e.player.name, assists: 0 };
-          }
-          acc[e.id_player].assists += 1;
-          return acc;
-        }, {}),
-      ).sort((a: any, b: any) => b.assists - a.assists);
+      const { topScorers, topAssists } = aggregatePlayerStats(match.events);
 
       return {
         id_matches: match.id_matches,

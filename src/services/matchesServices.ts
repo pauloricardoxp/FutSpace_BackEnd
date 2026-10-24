@@ -1,24 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 import { matchesCreate } from "../types/matches.js";
+import { AppError } from "../utils/errorHandler.js";
 
 export class matchesServices {
   constructor(private prisma: PrismaClient) {}
 
   async create(data: matchesCreate, id_usuario: number) {
     if (!data.name) {
-      throw new Error("O nome da partida é obrigatório");
+      throw new AppError("O nome da partida é obrigatório", 400);
     }
     if (!data.scheduled_at) {
-      throw new Error("A data da partida é obrigatória");
+      throw new AppError("A data da partida é obrigatória", 400);
     }
     if (!data.num_teams) {
-      throw new Error("O número de times é obrigatório");
+      throw new AppError("O número de times é obrigatório", 400);
     }
     if (!data.players_per_team) {
-      throw new Error("O número de jogadores por time é obrigatório");
+      throw new AppError("O número de jogadores por time é obrigatório", 400);
     }
     if (!data.duration_minutes) {
-      throw new Error("A duração da partida é obrigatória");
+      throw new AppError("A duração da partida é obrigatória", 400);
     }
 
     return await this.prisma.matches.create({
@@ -57,14 +58,14 @@ export class matchesServices {
     });
 
     if (!matches) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
     }
 
     const isOwner = matches.id_usuario === id_usuario;
     const isPlayer = matches.players.some((p) => p.id_usuario === id_usuario);
 
     if (!isOwner && !isPlayer) {
-      throw new Error("Acesso negado");
+      throw new AppError("Acesso negado", 403);
     }
 
     const totalPlayersNeeded = matches.num_teams * matches.players_per_team;
@@ -114,15 +115,15 @@ export class matchesServices {
     });
 
     if (!matches) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
     }
 
     if (matches.id_usuario !== id_users) {
-      throw new Error("Você não tem permissão para iniciar essa partida");
+      throw new AppError("Você não tem permissão para iniciar essa partida", 403);
     }
 
     if (matches.status !== "pending") {
-      throw new Error("Partida já foi iniciada");
+      throw new AppError("Partida já foi iniciada", 422);
     }
 
     return await this.prisma.matches.update({
@@ -137,19 +138,19 @@ export class matchesServices {
     });
 
     if (!matches) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
     }
 
     if (matches.id_usuario !== id_users) {
-      throw new Error("Você não tem permissão para finalizar essa partida");
+      throw new AppError("Você não tem permissão para finalizar essa partida", 403);
     }
 
     if (matches.status === "pending") {
-      throw new Error("A partida ainda não foi iniciada");
+      throw new AppError("A partida ainda não foi iniciada", 422);
     }
 
     if (matches.status === "finished") {
-      throw new Error("Partida já encerrada");
+      throw new AppError("Partida já encerrada", 422);
     }
 
     return await this.prisma.matches.update({

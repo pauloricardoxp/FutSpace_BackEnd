@@ -1,6 +1,7 @@
 export const eventsSchemas = {
   create: {
     tags: ["Events"],
+    security: [{ bearerAuth: [] }],
     summary: "Registrar gol ou assistência",
     body: {
       type: "object",

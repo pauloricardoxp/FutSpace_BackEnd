@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { playersCreate } from "../types/players.js";
+import { AppError } from "../utils/errorHandler.js";
 
 export class playerServices {
   constructor(private prisma: PrismaClient) {}
@@ -10,18 +11,20 @@ export class playerServices {
     });
 
     if (!matches) {
-      throw new Error("Partida nao encontrada");
+      throw new AppError("Partida nao encontrada", 404);
     }
 
     if (matches.id_usuario !== id_usuario) {
-      throw new Error(
+      throw new AppError(
         "Você não tem permissão para adicionar jogadores a esta partida",
+        403,
       );
     }
 
     if (matches.status !== "pending") {
-      throw new Error(
+      throw new AppError(
         "Voce nao pode adicionar jogador numa partida que esta iniciada ou finalizada",
+        422,
       );
     }
 
@@ -34,7 +37,7 @@ export class playerServices {
       });
 
       if (userAlreadyAdded) {
-        throw new Error("Este usuário já foi adicionado a esta partida");
+        throw new AppError("Este usuário já foi adicionado a esta partida", 409);
       }
     }
 
@@ -45,7 +48,7 @@ export class playerServices {
     const maxPlayers = matches.num_teams * matches.players_per_team;
 
     if (totalPlayers >= maxPlayers) {
-      throw new Error("Número máximo de jogadores atingido");
+      throw new AppError("Número máximo de jogadores atingido", 409);
     }
 
     return await this.prisma.players.create({
@@ -70,7 +73,7 @@ export class playerServices {
       select: {
         id_usuario: true,
         name: true,
-        email: true,
+        photo: true,
       },
     });
   }
@@ -85,18 +88,20 @@ export class playerServices {
     });
 
     if (!matches) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
     }
 
     if (matches.id_usuario !== id_usuario) {
-      throw new Error(
+      throw new AppError(
         "Você não tem permissão para remover jogadores desta partida",
+        403,
       );
     }
 
     if (matches.status !== "pending") {
-      throw new Error(
+      throw new AppError(
         "Você não pode remover jogadores de uma partida que está iniciada ou finalizada",
+        422,
       );
     }
 
@@ -105,11 +110,11 @@ export class playerServices {
     });
 
     if (!player) {
-      throw new Error("Jogador não encontrado");
+      throw new AppError("Jogador não encontrado", 404);
     }
 
     if (player.id_matches !== id_matches) {
-      throw new Error("Jogador não pertence a esta partida");
+      throw new AppError("Jogador não pertence a esta partida", 403);
     }
 
     return await this.prisma.players.delete({

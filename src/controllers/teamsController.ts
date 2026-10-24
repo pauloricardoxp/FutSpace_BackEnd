@@ -17,6 +17,7 @@ export class teamsController {
       const teams = await this.teamsServices.drawTeams(Number(id), id_usuario);
       res.code(200).send(teams);
     } catch (err: any) {
+      req.log.error({ err }, "Team request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -24,11 +25,14 @@ export class teamsController {
 
   async getTeams(req: FastifyRequest, res: FastifyReply) {
     const { id } = req.params as { id: string };
+    const { id: id_usuario } = req.user as { id: number };
     try {
-      const teams = await this.teamsServices.getTeams(Number(id));
+      const teams = await this.teamsServices.getTeams(Number(id), id_usuario);
       res.code(200).send(teams);
     } catch (err: any) {
-      res.code(500).send({ error: err.message });
+      req.log.error({ err }, "Team request failed");
+      const { statusCode, message } = handleError(err);
+      res.code(statusCode).send({ error: message });
     }
   }
 }

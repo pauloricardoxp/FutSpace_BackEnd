@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { aggregatePlayerStats } from "../utils/playerStats.js";
+import { AppError } from "../utils/errorHandler.js";
 
 export class dashboardService {
   constructor(private prisma: PrismaClient) {}
@@ -14,7 +16,7 @@ export class dashboardService {
     });
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new AppError("Usuário não encontrado", 404);
     }
 
     const allMatches = await this.prisma.matches.findMany({
@@ -64,28 +66,7 @@ export class dashboardService {
     totalGoals = userGoals.length;
 
     const recentMatches = allMatches.map((match) => {
-      const goals = match.events.filter((e) => e.type === "goal");
-      const assists = match.events.filter((e) => e.type === "assist");
-
-      const topScorers = Object.values(
-        goals.reduce((acc: any, e) => {
-          if (!acc[e.id_player]) {
-            acc[e.id_player] = { name: e.player.name, goals: 0 };
-          }
-          acc[e.id_player].goals += 1;
-          return acc;
-        }, {}),
-      ).sort((a: any, b: any) => b.goals - a.goals);
-
-      const topAssists = Object.values(
-        assists.reduce((acc: any, e) => {
-          if (!acc[e.id_player]) {
-            acc[e.id_player] = { name: e.player.name, assists: 0 };
-          }
-          acc[e.id_player].assists += 1;
-          return acc;
-        }, {}),
-      ).sort((a: any, b: any) => b.assists - a.assists);
+      const { topScorers, topAssists } = aggregatePlayerStats(match.events);
 
       return {
         id_matches: match.id_matches,

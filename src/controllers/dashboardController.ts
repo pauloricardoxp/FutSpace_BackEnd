@@ -16,6 +16,7 @@ export class dashboardController {
       const dashboard = await this.dashboardService.getDashboard(id_usuario);
       res.code(200).send(dashboard);
     } catch (err: any) {
+      req.log.error({ err }, "Dashboard request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

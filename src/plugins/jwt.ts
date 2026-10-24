@@ -3,10 +3,15 @@ import fastifyJwt from "@fastify/jwt";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 async function jwtPlugin(fastify: FastifyInstance) {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is required");
+  }
+
   fastify.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET ?? "troque_em_producao",
+    secret,
     sign: {
-      expiresIn: "1h",
+      expiresIn: "7d",
     },
   });
 
@@ -16,7 +21,7 @@ async function jwtPlugin(fastify: FastifyInstance) {
       try {
         await request.jwtVerify();
       } catch (err) {
-        reply.status(401).send({ error: "Token inválido ou expirado." });
+        return reply.status(401).send({ error: "Token inválido ou expirado." });
       }
     },
   );

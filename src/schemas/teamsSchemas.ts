@@ -1,6 +1,7 @@
 export const teamsSchemas = {
   draw: {
     tags: ["Teams"],
+    security: [{ bearerAuth: [] }],
     summary: "Sortear times automaticamente",
     params: {
       type: "object",
@@ -38,6 +39,7 @@ export const teamsSchemas = {
   },
   getTeams: {
     tags: ["Teams"],
+    security: [{ bearerAuth: [] }],
     summary: "Obter times de uma partida",
     params: {
       type: "object",

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { AppError } from "../utils/errorHandler.js";
 
 export class teamsService {
   constructor(private prisma: PrismaClient) {}
@@ -11,17 +12,18 @@ export class teamsService {
     });
 
     if (!match) {
-      throw new Error("Partida não encontrada");
+      throw new AppError("Partida não encontrada", 404);
     }
 
     if (match.id_usuario !== id_usuario) {
-      throw new Error(
+      throw new AppError(
         "Você não tem permissão para sortear times desta partida",
+        403,
       );
     }
 
     if (match.status !== "pending") {
-      throw new Error("O sorteio só pode ser feito em partidas pendentes");
+      throw new AppError("O sorteio só pode ser feito em partidas pendentes", 422);
     }
 
     const players = await this.prisma.players.findMany({
@@ -30,8 +32,9 @@ export class teamsService {
 
     const maxPlayers = match.num_teams * match.players_per_team;
     if (players.length < maxPlayers) {
-      throw new Error(
+      throw new AppError(
         `A partida precisa de ${maxPlayers} jogadores para sortear`,
+        422,
       );
     }
 
@@ -39,19 +42,11 @@ export class teamsService {
     const outfield = players.filter((p) => p.position !== "goleiro");
 
     if (goalkeepers.length < match.num_teams) {
-      throw new Error(
+      throw new AppError(
         `A partida precisa de pelo menos ${match.num_teams} goleiros`,
+        422,
       );
     }
-
-    await this.prisma.teams.deleteMany({
-      where: { id_matches },
-    });
-
-    await this.prisma.players.updateMany({
-      where: { id_matches },
-      data: { id_time: null },
-    });
 
     const shuffledGoalkeepers = this.shuffle(goalkeepers);
     const shuffledOutfield = this.shuffle(outfield);
@@ -66,32 +61,35 @@ export class teamsService {
       players: typeof players;
     }[] = [];
 
-    for (let i = 0; i < match.num_teams; i++) {
-      const team = await this.prisma.teams.create({
-        data: {
-          id_matches,
-          name: `Time ${i + 1}`,
-          goals: 0,
-        },
+    return this.prisma.$transaction(async (tx) => {
+      await tx.teams.deleteMany({ where: { id_matches } });
+      await tx.players.updateMany({
+        where: { id_matches },
+        data: { id_time: null },
       });
 
-      const playersPerTeam = match.players_per_team - 1;
-      const teamPlayers = [
-        shuffledGoalkeepers[i],
-        ...shuffledOutfield.splice(0, playersPerTeam),
-      ];
+      const availablePlayers = this.shuffle([
+        ...shuffledGoalkeepers.slice(match.num_teams),
+        ...shuffledOutfield,
+      ]);
 
-      await this.prisma.players.updateMany({
-        where: {
-          id_players: { in: teamPlayers.map((p) => p.id_players) },
-        },
-        data: { id_time: team.id_time },
-      });
+      for (let i = 0; i < match.num_teams; i++) {
+        const team = await tx.teams.create({
+          data: { id_matches, name: `Time ${i + 1}`, goals: 0 },
+        });
+        const teamPlayers = [
+          shuffledGoalkeepers[i],
+          ...availablePlayers.splice(0, match.players_per_team - 1),
+        ];
 
-      results.push({ team, players: teamPlayers });
-    }
-
-    return results;
+        await tx.players.updateMany({
+          where: { id_players: { in: teamPlayers.map((p) => p.id_players) } },
+          data: { id_time: team.id_time },
+        });
+        results.push({ team, players: teamPlayers });
+      }
+      return results;
+    });
   }
 
   private shuffle<T>(array: T[]): T[] {
@@ -101,7 +99,19 @@ export class teamsService {
       .map(({ item }) => item);
   }
 
-  async getTeams(id_matches: number) {
+  async getTeams(id_matches: number, id_usuario: number) {
+    const match = await this.prisma.matches.findUnique({
+      where: { id_matches },
+      select: { id_usuario: true, players: { select: { id_usuario: true } } },
+    });
+    if (!match) throw new AppError("Partida não encontrada", 404);
+    if (
+      match.id_usuario !== id_usuario &&
+      !match.players.some((player) => player.id_usuario === id_usuario)
+    ) {
+      throw new AppError("Acesso negado", 403);
+    }
+
     const teams = await this.prisma.teams.findMany({
       where: { id_matches },
       include: { players: true },

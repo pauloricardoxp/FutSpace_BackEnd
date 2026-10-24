@@ -13,12 +13,14 @@ export class eventController {
 
   async create(req: FastifyRequest, res: FastifyReply) {
     const { id } = req.params as { id: number };
+    const { id: id_usuario } = req.user as { id: number };
     const body = req.body as eventCreate;
 
     try {
-      const events = await this.eventService.create(Number(id), body);
+      const events = await this.eventService.create(Number(id), id_usuario, body);
       res.code(201).send(events);
     } catch (err: any) {
+      req.log.error({ err }, "Event request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

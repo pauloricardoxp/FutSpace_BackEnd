@@ -24,6 +24,7 @@ export class playersController {
       );
       res.code(201).send(players);
     } catch (err: any) {
+      req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -39,6 +40,7 @@ export class playersController {
       const players = await this.playersService.searchUsers(name);
       res.code(200).send(players);
     } catch (err: any) {
+      req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }
@@ -59,6 +61,7 @@ export class playersController {
       );
       res.code(200).send(result);
     } catch (err: any) {
+      req.log.error({ err }, "Player request failed");
       const { statusCode, message } = handleError(err);
       res.code(statusCode).send({ error: message });
     }

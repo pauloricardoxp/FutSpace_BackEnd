@@ -1,6 +1,7 @@
 export const matchesSchemas = {
   create: {
     tags: ["Matches"],
+    security: [{ bearerAuth: [] }],
     summary: "Criar nova partida",
     body: {
       type: "object",
@@ -38,6 +39,7 @@ export const matchesSchemas = {
 
   list: {
     tags: ["Matches"],
+    security: [{ bearerAuth: [] }],
     summary: "Listar partidas do usuário",
     response: {
       200: {
@@ -56,6 +58,7 @@ export const matchesSchemas = {
 
   getById: {
     tags: ["Matches"],
+    security: [{ bearerAuth: [] }],
     summary: "Obter partida com jogadores e detalhes",
     params: {
       type: "object",
@@ -135,6 +138,7 @@ export const matchesSchemas = {
 
   start: {
     tags: ["Matches"],
+    security: [{ bearerAuth: [] }],
     summary: "Iniciar partida",
     params: {
       type: "object",
@@ -153,6 +157,7 @@ export const matchesSchemas = {
 
   finish: {
     tags: ["Matches"],
+    security: [{ bearerAuth: [] }],
     summary: "Finalizar partida",
     params: {
       type: "object",
